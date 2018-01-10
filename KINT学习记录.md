@@ -3,7 +3,7 @@ Kint使用方法
 
 1.Kint工作在LLVM字节码上，为了分析软件，第一步是生成LLVM字节码。Kint提供了一个脚本‘kint-build’，它同时调用了gcc(或g++)和clang对源代码进行编译，存储在.ll文件中。在源代码文件夹中执行以下指令。
 
-\$ kint/build/bin/kint-build make
+>   \$ kint/build/bin/kint-build make
 
 该脚本调用过程，kint-build -\> kint-gcc -\> kint-cc1 -\> clang & opt -\> gcc .
 
