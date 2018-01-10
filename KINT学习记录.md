@@ -3,19 +3,19 @@ Kint使用方法
 
 1.Kint工作在LLVM字节码上，为了分析软件，第一步是生成LLVM字节码。Kint提供了一个脚本‘kint-build’，它同时调用了gcc(或g++)和clang对源代码进行编译，存储在.ll文件中。在源代码文件夹中执行以下指令。
 
-\$ kint/build/bin/kint-build make
+>   \$ kint/build/bin/kint-build make
 
 该脚本调用过程，kint-build -\> kint-gcc -\> kint-cc1 -\> clang & opt -\> gcc .
 
 2.为了发现整数溢出，首先可以执行Kint在LLVM字节码上的全局分析，生成一些全局约束，减少后续分析步骤的误报。该步骤是可选的，如果不工作（例如出现bug）可以跳过执行。
 
-\$ find . -name "\*.ll" \> bitcode.lst
+>   \$ find . -name "\*.ll" \> bitcode.lst
 
-\$ kint/build/bin/intglobal \@bitcode.lst
+>   \$ kint/build/bin/intglobal \@bitcode.lst
 
 3.最后，在源代码文件夹中执行以下指令进行整数溢出检查。
 
-\$ /home/john/program/kint/build/bin/pintck
+>   \$ /home/john/program/kint/build/bin/pintck
 
 最终的bug结构保存在‘pintck.txt’中。
 
@@ -39,29 +39,29 @@ Kint使用方法
 
 维护全局上下文来记录上述分析结果，并最终以元数据形式标注到llvm代码中。
 
-GlobalContext {
+>   GlobalContext {
 
-// 全局函数名字到定义的映射\<StringRef,Function\*\>
+>   // 全局函数名字到定义的映射\<StringRef,Function\*\>
 
-FuncMap Funcs;
+>   FuncMap Funcs;
 
-// 函数指针(IDs)到可能分配的映射\<string,FuncSet\>
+>   // 函数指针(IDs)到可能分配的映射\<string,FuncSet\>
 
-FuncPtrMap FuncPtrs;
+>   FuncPtrMap FuncPtrs;
 
-// 调用点到所有潜在被调指令的映射\<CallInst\*,FuncSet\>
+>   // 调用点到所有潜在被调指令的映射\<CallInst\*,FuncSet\>
 
-CalleeMap Callees;
+>   CalleeMap Callees;
 
-// 污点信息：全局污点GTS，本地污点VTS
+>   // 污点信息：全局污点GTS，本地污点VTS
 
-TaintMap Taints;
+>   TaintMap Taints;
 
-// 全局范围信息\<id, CRange\>
+>   // 全局范围信息\<id, CRange\>
 
-RangeMap IntRanges;
+>   RangeMap IntRanges;
 
-};
+>   };
 
 1.1 AnnotationPass
 ------------------
@@ -81,17 +81,17 @@ RangeMap IntRanges;
 
 实现对代码中调用图的分析，主要通过维护全局上下文中三个映射。
 
-// 全局函数名字到定义的映射\<StringRef,Function\*\>
+>   // 全局函数名字到定义的映射\<StringRef,Function\*\>
 
-FuncMap Funcs;
+>   FuncMap Funcs;
 
-// 函数指针(IDs)到可能分配的映射\<string,FuncSet\>
+>   // 函数指针(IDs)到可能分配的映射\<string,FuncSet\>
 
-FuncPtrMap FuncPtrs; 存储的是什么？
+>   FuncPtrMap FuncPtrs; 存储的是什么？
 
-// 调用点到所有潜在被调指令的映射\<CallInst\*,FuncSet\>
+>   // 调用点到所有潜在被调指令的映射\<CallInst\*,FuncSet\>
 
-CalleeMap Callees; 实验中都是单个被调函数
+>   CalleeMap Callees; 实验中都是单个被调函数
 
 ·FuncPrtrs：
 
@@ -117,9 +117,9 @@ CalleeMap Callees; 实验中都是单个被调函数
 
 实现污点传播过程，主要通过维护全局上下文中的Taints映射。
 
-// 污点信息：全局污点GTS，本地污点VTS
+>   // 污点信息：全局污点GTS，本地污点VTS
 
-TaintMap Taints;
+>   TaintMap Taints;
 
 Taints中包含两个映射：全局映射GTS，局部映射VTS。污点传播算法：
 
@@ -140,18 +140,18 @@ Taints中包含两个映射：全局映射GTS，局部映射VTS。污点传播�
 
 举例
 
-int foo1(int a){ //假设a已经是污点
+>   int foo1(int a){ //假设a已经是污点
 
-int b,c;
+>   int b,c;
 
-b = a+1; //则根据3，b被标记为污点
+>   b = a+1; //则根据3，b被标记为污点
 
-c = foo2(b);
-//根据2，因为b为污点，所以foo2的参数被记为全局污点，污点传播到函数foo2中
+>   c = foo2(b);
+>   //根据2，因为b为污点，所以foo2的参数被记为全局污点，污点传播到函数foo2中
 
-return c; //根据5，若c为污点，则foo1被标记为污点，传播到调用foo1函数的地方
+>   return c; //根据5，若c为污点，则foo1被标记为污点，传播到调用foo1函数的地方
 
-}
+>   }
 
 1.4 RangePass
 -------------
@@ -159,9 +159,9 @@ return c; //根据5，若c为污点，则foo1被标记为污点，传播到调�
 实现\<值-范围\>分析。通过维护全局上下文中的全局\<值-范围\>，每个基本块维护基本块内的局部\<值-范围\>。范围使用“上下限”表示：{Lower，
 Upper}。
 
-// 全局范围信息\<id, CRange\>
+>   // 全局范围信息\<id, CRange\>
 
-RangeMap IntRanges;
+>   RangeMap IntRanges;
 
 范围传递算法：
 
@@ -174,15 +174,15 @@ RangeMap IntRanges;
 
 3. 基本块内和函数间\<值-范围\>传递：
 
-a. 对于store指令，同时更新“store目标地址”的“全局范围”和“局部范围”。
+>   a. 对于store指令，同时更新“store目标地址”的“全局范围”和“局部范围”。
 
-b. 对于return指令，更新“return所属函数”的“全局范围”。
+>   b. 对于return指令，更新“return所属函数”的“全局范围”。
 
-c.
-对于call指令，更新被“调函数参数”的“全局范围”；同时利用返回值，更新“call指令”的“全局范围”。
+>   c.
+>   对于call指令，更新被“调函数参数”的“全局范围”；同时利用返回值，更新“call指令”的“全局范围”。
 
-d.
-对于二元操作指令(加、减、乘、除、移位、与、或、异或等)，转换指令(cast)，选择指令，PHI指令，Load指令，call指令，更新相关值的“局部范围”。
+>   d.
+>   对于二元操作指令(加、减、乘、除、移位、与、或、异或等)，转换指令(cast)，选择指令，PHI指令，Load指令，call指令，更新相关值的“局部范围”。
 
 4. 遍历函数，迭代上述2-3步骤，直到没有新的范围更新或超过最大迭代次数。
 
@@ -210,19 +210,19 @@ libintck.so提供的Opt优化pass
 黄色代表intck中选择的opt选项
 
 2.1 LoadRewirte
-===============
+---------------
 
 2.2 OverflowIdiom
-=================
+-----------------
 
 2.3 OverflowSimplify
-====================
+--------------------
 
 2.4 IntLibcalls
-===============
+---------------
 
 2.5 IntRewrite
-==============
+--------------
 
 在需要进行整数检查的位置插入“int.sat”的函数调用，并使用“bug”元数据标注。
 
@@ -245,7 +245,7 @@ int.sat，对该断言满足性进行检查。
 注：如果上述指令被标记为污点或者sink点，则call int.sat也被标记为污点或者sink点。
 
 2.6 IntSat
-==========
+----------
 
 针对IntRewrite中插入的int.sat，对需要检查的断言收集约束，并调用SMT求解器求解可满足性。
 
@@ -261,16 +261,16 @@ int.sat，对该断言满足性进行检查。
 3.
 根据约束生成SMT表达式，调用SMT约束求解器对SMT表达式进行求解，求解结果可能的状态如下：
 
-SMTStatus {
+>   SMTStatus {
 
-SMT\_TIMEOUT = -1,
+>   SMT\_TIMEOUT = -1,
 
-SMT\_UNDEF,
+>   SMT\_UNDEF,
 
-SMT\_UNSAT,
+>   SMT\_UNSAT,
 
-SMT\_SAT,
+>   SMT\_SAT,
 
-};
+>   };
 
 4. SMT\_SAT表示可满足，将其求解结果输出。
