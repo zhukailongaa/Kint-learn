@@ -255,16 +255,16 @@ int.sat，对该断言满足性进行检查。
 
 3. 根据约束生成SMT表达式，调用SMT约束求解器对SMT表达式进行求解，求解结果可能的状态如下：
 
-    SMTStatus {
+        SMTStatus {
 
-    SMT\_TIMEOUT = -1,
+        SMT\_TIMEOUT = -1,
 
-    SMT\_UNDEF,
+        SMT\_UNDEF,
 
-    SMT\_UNSAT,
+        SMT\_UNSAT,
 
-    SMT\_SAT,
+        SMT\_SAT,
 
-    };
+        };
 
 4. SMT\_SAT表示可满足，将其求解结果输出。
