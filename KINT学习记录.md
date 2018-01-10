@@ -3,19 +3,19 @@ Kint使用方法
 
 1.Kint工作在LLVM字节码上，为了分析软件，第一步是生成LLVM字节码。Kint提供了一个脚本‘kint-build’，它同时调用了gcc(或g++)和clang对源代码进行编译，存储在.ll文件中。在源代码文件夹中执行以下指令。
 
-    $ kint/build/bin/kint-build make
+\$ kint/build/bin/kint-build make
 
 该脚本调用过程，kint-build -\> kint-gcc -\> kint-cc1 -\> clang & opt -\> gcc .
 
 2.为了发现整数溢出，首先可以执行Kint在LLVM字节码上的全局分析，生成一些全局约束，减少后续分析步骤的误报。该步骤是可选的，如果不工作（例如出现bug）可以跳过执行。
 
-    $ find . -name "\*.ll" \> bitcode.lst
+\$ find . -name "\*.ll" \> bitcode.lst
 
-    $ kint/build/bin/intglobal \@bitcode.lst
+\$ kint/build/bin/intglobal \@bitcode.lst
 
 3.最后，在源代码文件夹中执行以下指令进行整数溢出检查。
 
-    $ /home/john/program/kint/build/bin/pintck
+\$ /home/john/program/kint/build/bin/pintck
 
 最终的bug结构保存在‘pintck.txt’中。
 
