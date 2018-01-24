@@ -3,14 +3,13 @@
 
 因为kint是2013年的工具，很久没更新，直接安装最新版本的llvm会导致兼容性问题，所以需要手动编译安装llvm-3.2。
 
-1. 安装llvm-3.2
-===============
+1 安装llvm-3.2
+==================
 
 1 下载llvm所需文件
 ------------------
 
-从llvm官网(http://releases.llvm.org/download.html\#3.2)下载三个文件：LLVM source
-code, Clang source code, Compiler RT source code。
+从llvm官网(http://releases.llvm.org/download.html\#3.2)下载三个文件：LLVM source code, Clang source code, Compiler RT source code。
 
 2 构造目录结构
 --------------
@@ -26,30 +25,29 @@ code, Clang source code, Compiler RT source code。
 
 需要安装g++：
 
-\$ sudo apt-get install g++
+    $ sudo apt-get install g++
 
 创建build文件夹，进行编译：
 
-\$ cd llvm
+    $ cd llvm
 
-\$ mkdir build
+    $ mkdir build
 
-\$ cd build
+    $ cd build
 
-\$ ../configure --enable-optimized --enable-targets=host --enable-bindings=none
---enable-shared --enable-debug-symbols
+    $ ../configure --enable-optimized --enable-targets=host --enable-bindings=none --enable-shared --enable-debug-symbols
 
 使用make进行编译，可以选择多核编译。编译需要较长时间。
 
-\$ make -j4
+    $ make -j4
 
 4 安装
 ------
 
-\$ sudo make install
+    $ sudo make install
 
-2. 安装kint
-===========
+2 安装kint
+==================
 
 1 下载kint源码
 --------------
@@ -63,20 +61,20 @@ Kint地址：<https://github.com/CRYPTOlab/kint>.
 
 安装编译需要的工具：
 
-\$ sudo apt-get install autoconf automake libtool
+    $ sudo apt-get install autoconf automake libtool
 
 执行以下命令进行编译：
 
-\$ cd kint
+    $ cd kint
 
-\$ autoreconf -fvi
+    $ autoreconf -fvi
 
-\$ mkdir build
+    $ mkdir build
 
-\$ cd build
+    $ cd build
 
-\$ ../configure
+    $ ../configure
 
-\$ make
+    $ make
 
 编译好的文件在build/bin目录下。
